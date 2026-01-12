@@ -1,0 +1,65 @@
+<script setup lang="ts">
+import { onMounted } from 'vue';
+import { cocktailLists, mockTailLists } from '../../constants/'
+import gsap from 'gsap';
+
+
+onMounted(() => {
+    const parallaxTimeline = gsap.timeline({
+        scrollTrigger: {
+            trigger: '#cocktails',
+            start: 'top 30%',
+            end: 'bottom 80%',
+            scrub: true,
+        }
+    })
+
+    parallaxTimeline
+        .from('#c-left-leaf', {
+            x: -100, y: 100
+        })
+        .from('#c-right-leaf', {
+            x: 100, y: 100
+        })
+})
+
+
+</script>
+
+
+<template>
+    <section id="cocktails" className="noisy">
+        <img src="/images/cocktail-left-leaf.png" alt="l-leaf" id="c-left-leaf" />
+        <img src="/images/cocktail-right-leaf.png" alt="r-leaf" id="c-right-leaf" />
+
+        <div className="list">
+            <div className="popular">
+                <h2>Most popular cocktails:</h2>
+
+                <ul>
+                    <li v-for="cocktail in cocktailLists" :key="cocktail.name">
+                        <div class="md:me-28">
+                            <h3>{{ cocktail.name }}</h3>
+                            <p>{{ cocktail.country }} | {{ cocktail.detail }}</p>
+                        </div>
+                        <span>- {{ cocktail.price }}</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div className="loved">
+                <h2>Most loved mocktails:</h2>
+
+                <ul>
+                    <li v-for="mockTail in mockTailLists" :key="mockTail.name">
+                        <div class="md:me-28">
+                            <h3>{{ mockTail.name }}</h3>
+                            <p>{{ mockTail.country }} | {{ mockTail.detail }}</p>
+                        </div>
+                        <span>- {{ mockTail.price }}</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+</template>
