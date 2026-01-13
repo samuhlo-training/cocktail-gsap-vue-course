@@ -29,11 +29,23 @@ const ANIMATION_DURATION = 1;
  * [ hook ] :: ON_MOUNTED
  * Initializes the scroll-triggered animation for the navbar background.
  */
+/**
+ * [ hook ] :: ON_MOUNTED
+ * Initializes the scroll-triggered animation for the navbar background.
+ */
 onMounted(() => {
   /**
    * [ANIMATION] :: NAVBAR_SCROLL_EFFECT
    * Changes the navbar background from transparent to semi-transparent black
    * with a blur effect when the user scrolls past the top of the page.
+   *
+   * HOW IT WORKS:
+   * We use a GSAP Timeline with a ScrollTrigger.
+   *
+   * TRIGGER LOGIC (start: 'bottom top'):
+   * This means the animation starts when the BOTTOM of the 'nav' element
+   * hits the TOP of the viewport. Essentially, as soon as the user starts
+   * scrolling and the header moves up, we trigger the background change.
    */
   const navTween = gsap.timeline({
     scrollTrigger: {
@@ -42,12 +54,16 @@ onMounted(() => {
     }
   });
 
+  // WHY FROMTO?
+  // We explicitly define both state A (transparent) and state B (blurred/colored).
+  // This ensures that even if the user scrolls up and down quickly, GSAP
+  // always knows exactly what values to interpolate between.
   navTween.fromTo(
     'nav', 
     { backgroundColor: 'transparent' }, 
     { 
       backgroundColor: '#000000050', 
-      backdropFilter: 'blur(10px)', 
+      backdropFilter: 'blur(10px)', // GSAP can animate complex CSS props like filters!
       duration: ANIMATION_DURATION, 
       ease: 'power1.out' 
     }

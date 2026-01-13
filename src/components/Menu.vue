@@ -32,6 +32,11 @@ const ANIM_DURATION = 1;
  * [CALC] :: CURRENT_COCKTAIL
  * Returns the cocktail object for the active slide.
  * Handles circular indexing wrapping.
+ *
+ * HOW IT WORKS (Circular Logic):
+ * (currentIndex + total) % total
+ * 1. If index is 0 and we go BACK (-1), (-1 + 5) % 5 = 4. Wraps to end.
+ * 2. If index is 4 and we go NEXT (5), (5 + 5) % 5 = 0. Wraps to start.
  */
 const currentCocktail = computed<Cocktail>(() => {
     return allCocktails[(currentIndex.value + totalCocktails) % totalCocktails] as Cocktail;
@@ -105,6 +110,11 @@ const animateSlide = () => {
 /**
  * [WATCH] :: ON_INDEX_CHANGE
  * Triggers the slide transition animation whenever the active slide changes.
+ *
+ * WHY WATCH?
+ * Vue's reactivity system updates the DOM automatically (image src, text).
+ * However, GSAP animations are imperative. We need to explicitly tell GSAP
+ * "Play this animation NOW because the index just changed."
  */
 watch(currentIndex, () => {
     animateSlide();

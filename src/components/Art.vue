@@ -58,7 +58,7 @@ onMounted(() => {
                     start,
                     end: 'bottom center',
                     scrub: SCRUB_INTENSITY,
-                    pin: true
+                    pin: true // WHY PIN? 'pin: true' freezes the #art section in the viewport while the animation plays.
                 }
             });
 
@@ -75,6 +75,9 @@ onMounted(() => {
                     ease: 'power1.inOut' 
                 })
                 .to('.masked-img', { 
+                    // HOW MASK ANIMATION WORKS:
+                    // By increasing the scale of the image AND the size of the mask (clip-path effectively),
+                    // we create the illusion of "entering" the image.
                     scale: MASK_SCALE_TARGET, 
                     maskPosition: 'center', 
                     maskSize: MASK_SIZE_TARGET, 

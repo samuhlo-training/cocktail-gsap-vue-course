@@ -71,6 +71,10 @@ onMounted(() => {
                 duration: ANIM_DURATION, 
                 ease: 'power1.inOut'
             })
+            // WHY THE '<' SYMBOL?
+            // This is a POSITION PARAMETER. '<' means "start at the same time as the START of the PREVIOUS animation".
+            // So, #f-left-leaf starts moving at the exact same moment as #f-right-leaf.
+            // Without this, they would move sequentially (one after the other).
             .to('#f-left-leaf', {
                 y: LEAF_Y_OFFSET, 
                 duration: ANIM_DURATION, 

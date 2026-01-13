@@ -32,6 +32,11 @@ onMounted(() => {
     const titleSplit = SplitText.create('#about h2', {
         type: 'words'
     })
+    
+    // WHY SCROLLTRIGGER?
+    // We want these elements to appear ONLY when the user reaches this section.
+    // 'start: "top center"' means the animation begins when the TOP of the #about section
+    // hits the CENTER of the viewport. This is a good "reading" position.
     const scrollTimeline = gsap.timeline({
         scrollTrigger: {
             trigger: '#about',
@@ -46,14 +51,21 @@ onMounted(() => {
             duration: 1, 
             yPercent: 100, 
             ease: 'expo.out', 
-            stagger: 0.02
+            stagger: 0.02 // A tiny delay between each word creates a rippling text effect
         })
+        // HOW SELECTORS WORK:
+        // GSAP can target multiple groups of elements at once. 
+        // Here we select all divs inside .top-grid AND .bottom-grid simultaneously.
         .from('.top-grid div, .bottom-grid div', {
             opacity: 0, 
             duration: 1, 
             ease: 'power1.inOut', 
-            stagger: 0.04,
-        }, '-=0.5')
+            stagger: 0.04, // Stagger each image's appearance for a cascading grid effect
+        }, '-=0.5') 
+        // ^ WHAT IS '-=0.5'?
+        // This is the POSITION PARAMETER. It tells the timeline to start this animation
+        // 0.5 seconds BEFORE the previous animation (the text reveal) finishes.
+        // This overlap makes the whole sequence feel faster and more fluid.
 })
 
 </script>

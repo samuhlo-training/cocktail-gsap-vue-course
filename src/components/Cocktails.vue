@@ -40,15 +40,20 @@ onMounted(() => {
 
     const OFFSET_VAL = 100;
 
+    // HOW PARALLAX WORKS HERE:
+    // We use .from() to define a starting position that is DIFFERENT from the CSS position.
+    // 'scrub: true' means that as we scroll, the elements move FROM these coordinates
+    // TO their natural CSS position (0,0).
     parallaxTimeline
         .from('#c-left-leaf', {
-            x: -OFFSET_VAL, 
-            y: OFFSET_VAL
+            x: -OFFSET_VAL, // Starts 100px to the left
+            y: OFFSET_VAL   // Starts 100px down
         })
         .from('#c-right-leaf', {
-            x: OFFSET_VAL, 
-            y: OFFSET_VAL
+            x: OFFSET_VAL,  // Starts 100px to the right
+            y: OFFSET_VAL   // Starts 100px down
         })
+        // RESULT: As you scroll down, both leaves will appear to rise up and move inward.
 })
 </script>
 
