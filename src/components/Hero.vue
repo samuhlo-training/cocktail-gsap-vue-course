@@ -1,4 +1,17 @@
 <script setup lang="ts">
+/**
+ * [COMPONENT] :: HERO_SECTION
+ * ----------------------------------------------------------------------
+ * The landing section of the application featuring a video background,
+ * split-text animations, and parallax effects on scroll.
+ *
+ * @module    components/Hero.vue
+ * ----------------------------------------------------------------------
+ */
+
+// =====================================================================
+// [SECTION] :: IMPORTS
+// =====================================================================
 import { ref, onMounted, onUnmounted } from 'vue';
 import gsap from 'gsap';
 import { ScrollTrigger, SplitText } from 'gsap/all';
@@ -6,12 +19,38 @@ import { ScrollTrigger, SplitText } from 'gsap/all';
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
 
+// =====================================================================
+// [SECTION] :: CONSTANTS & CONFIG
+// =====================================================================
+const TEXT_ANIM_DURATION = 1.8;
+const TEXT_ANIM_STAGGER  = 0.06;
+const TEXT_DELAY         = 1;
+
+// Parallax movement values
+const P_RIGHT_LEAF_Y = 200;
+const P_LEFT_LEAF_Y  = -200;
+const P_ARROW_Y      = 100;
+
+// =====================================================================
+// [SECTION] :: COMPONENT STATE
+// =====================================================================
 const videoRef = ref<HTMLVideoElement | null>(null);
 let ctx: gsap.Context;
 
+// =====================================================================
+// [SECTION] :: LIFECYCLE HOOKS
+// =====================================================================
+
+/**
+ * [ hook ] :: ON_MOUNTED
+ * Initializes GSAP context, text animations, and scroll-triggered video control.
+ */
 onMounted(() => {
   ctx = gsap.context(() => {
-    // Text Animations
+    // -----------------------------------------------------------------
+    // [ANIMATION] :: TEXT_SPLIT
+    // Splits title and subtitle for staggered entrance effects.
+    // -----------------------------------------------------------------
     const heroSplit = new SplitText(".title", {
       type: "chars, words",
     });
@@ -20,26 +59,31 @@ onMounted(() => {
       type: "lines",
     });
 
-    // Apply text-gradient class
+    // Apply text-gradient class to each character of the title
     heroSplit.chars.forEach((char) => char.classList.add("text-gradient"));
 
+    // Animate Title
     gsap.from(heroSplit.chars, {
       yPercent: 100,
-      duration: 1.8,
+      duration: TEXT_ANIM_DURATION,
       ease: "expo.out",
-      stagger: 0.06,
+      stagger: TEXT_ANIM_STAGGER,
     });
 
+    // Animate Subtitle
     gsap.from(paragraphSplit.lines, {
       opacity: 0,
       yPercent: 100,
-      duration: 1.8,
+      duration: TEXT_ANIM_DURATION,
       ease: "expo.out",
-      stagger: 0.06,
-      delay: 1,
+      stagger: TEXT_ANIM_STAGGER,
+      delay: TEXT_DELAY,
     });
 
-    // Parallax & ScrollTrigger common
+    // -----------------------------------------------------------------
+    // [ANIMATION] :: PARALLAX_SCROLL
+    // Moves decorative elements (leaves, arrow) at different speeds.
+    // -----------------------------------------------------------------
     gsap.timeline({
         scrollTrigger: {
           trigger: "#hero",
@@ -48,11 +92,14 @@ onMounted(() => {
           scrub: true,
         },
       })
-      .to(".right-leaf", { y: 200 }, 0)
-      .to(".left-leaf", { y: -200 }, 0)
-      .to(".arrow", { y: 100 }, 0);
+      .to(".right-leaf", { y: P_RIGHT_LEAF_Y }, 0)
+      .to(".left-leaf", { y: P_LEFT_LEAF_Y }, 0)
+      .to(".arrow", { y: P_ARROW_Y }, 0);
 
-    // Video ScrollTrigger with Responsive Logic
+    // -----------------------------------------------------------------
+    // [ANIMATION] :: VIDEO_CONTROL
+    // Syncs video playback with scroll position. Handles responsive start/end points.
+    // -----------------------------------------------------------------
     const mm = gsap.matchMedia();
 
     mm.add({
@@ -94,6 +141,10 @@ onMounted(() => {
   });
 });
 
+/**
+ * [ hook ] :: ON_UNMOUNTED
+ * Cleans up GSAP context to prevent memory leaks or conflict.
+ */
 onUnmounted(() => {
   ctx?.revert();
 });

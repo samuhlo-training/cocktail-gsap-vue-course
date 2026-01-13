@@ -1,9 +1,34 @@
 <script setup lang="ts">
+/**
+ * [COMPONENT] :: ABOUT_SECTION
+ * ----------------------------------------------------------------------
+ * "About Us" section featuring a text introduction and a masonry-like
+ * grid of images that animate in on scroll.
+ *
+ * @module    components/About.vue
+ * ----------------------------------------------------------------------
+ */
+
+// =====================================================================
+// [SECTION] :: IMPORTS
+// =====================================================================
 import gsap from 'gsap';
 import { onMounted } from 'vue';
 import { SplitText } from 'gsap/all';
 
+// =====================================================================
+// [SECTION] :: LIFECYCLE HOOKS
+// =====================================================================
+
+/**
+ * [ hook ] :: ON_MOUNTED
+ * Triggers the entrance animation for text and the image grid.
+ */
 onMounted(() => {
+    // -----------------------------------------------------------------
+    // [ANIMATION] :: TEXT_REVEAL
+    // Splits the heading into words for individual animation.
+    // -----------------------------------------------------------------
     const titleSplit = SplitText.create('#about h2', {
         type: 'words'
     })
@@ -14,19 +39,29 @@ onMounted(() => {
         }
     })
 
+    // Sequence: Heading Words -> Grid Images
     scrollTimeline
         .from(titleSplit.words, {
-            opacity: 0, duration: 1, yPercent: 100, ease: 'expo.out', stagger: 0.02
+            opacity: 0, 
+            duration: 1, 
+            yPercent: 100, 
+            ease: 'expo.out', 
+            stagger: 0.02
         })
         .from('.top-grid div, .bottom-grid div', {
-            opacity: 0, duration: 1, ease: 'power1.inOut', stagger: 0.04,
+            opacity: 0, 
+            duration: 1, 
+            ease: 'power1.inOut', 
+            stagger: 0.04,
         }, '-=0.5')
 })
 
 </script>
 
 <template>
+    <!-- [CONTAINER] :: ABOUT_SECTION_ROOT -->
     <div id="about">
+        <!-- [SUB-SECTION] :: TEXT_CONTENT -->
         <div className="mb-16 md:px-0 px-5">
             <div className="content">
                 <div className="md:col-span-8">
@@ -55,6 +90,7 @@ onMounted(() => {
             </div>
         </div>
 
+        <!-- [SUB-SECTION] :: IMAGE_GRID_TOP -->
         <div className="top-grid">
             <div className="md:col-span-3">
                 <div className="noisy" />
@@ -68,10 +104,11 @@ onMounted(() => {
 
             <div className="md:col-span-3">
                 <div className="noisy" />
-                <img src="/images/abt5.png" alt="grid-img-5" />
+                <img src="/images/abt1.png" alt="grid-img-5" />
             </div>
         </div>
 
+        <!-- [SUB-SECTION] :: IMAGE_GRID_BOTTOM -->
         <div className="bottom-grid">
             <div className="md:col-span-8">
                 <div className="noisy" />
