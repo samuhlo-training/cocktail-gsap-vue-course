@@ -49,7 +49,7 @@
 
 ```bash
 # 1. Clone
-git clone https://github.com/samuhlo/mojito-gsap-course.git
+git clone https://github.com/samuhlo-training/mojito-gsap-course.git
 
 # 2. Install dependencies (pnpm enforced)
 pnpm install
