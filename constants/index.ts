@@ -1,4 +1,15 @@
-const navLinks = [
+import type {
+	NavLink,
+	CocktailListItem,
+	MocktailListItem,
+	Profile,
+	StoreInfo,
+	OpeningHour,
+	Social,
+	Cocktail
+} from '../src/types';
+
+const navLinks: NavLink[] = [
  {
 	id: "cocktails",
 	title: "Cocktails",
@@ -12,12 +23,16 @@ const navLinks = [
 	title: "The Art",
  },
  {
+	id: "menu",
+	title: "Menu",
+ },
+ {
 	id: "contact",
 	title: "Contact",
  },
 ];
 
-const cocktailLists = [
+const cocktailLists: CocktailListItem[] = [
  {
 	name: "Chapel Hill Shiraz",
 	country: "AU",
@@ -44,7 +59,7 @@ const cocktailLists = [
  },
 ];
 
-const mockTailLists = [
+const mockTailLists: MocktailListItem[] = [
  {
 	name: "Tropical Bloom",
 	country: "US",
@@ -71,7 +86,7 @@ const mockTailLists = [
  },
 ];
 
-const profileLists = [
+const profileLists: Profile[] = [
  {
 	imgPath: "/images/profile1.png",
  },
@@ -86,21 +101,21 @@ const profileLists = [
  },
 ];
 
-const featureLists = [
+const featureLists: string[] = [
  "Perfectly balanced blends",
  "Garnished to perfection",
  "Ice-cold every time",
  "Expertly shaken & stirred",
 ];
 
-const goodLists = [
+const goodLists: string[] = [
  "Handpicked ingredients",
  "Signature techniques",
  "Bartending artistry in action",
  "Freshly muddled flavors",
 ];
 
-const storeInfo = {
+const storeInfo: StoreInfo = {
  heading: "Where to Find Us",
  address: "456, Raq Blvd. #404, Los Angeles, CA 90210",
  contact: {
@@ -109,14 +124,14 @@ const storeInfo = {
  },
 };
 
-const openingHours = [
+const openingHours: OpeningHour[] = [
  { day: "Mon–Thu", time: "11:00am – 12am" },
  { day: "Fri", time: "11:00am – 2am" },
  { day: "Sat", time: "9:00am – 2am" },
  { day: "Sun", time: "9:00am – 1am" },
 ];
 
-const socials = [
+const socials: Social[] = [
  {
 	name: "Instagram",
 	icon: "/images/insta.png",
@@ -134,7 +149,7 @@ const socials = [
  },
 ];
 
-const allCocktails = [
+const allCocktails: Cocktail[] = [
  {
 	id: 1,
 	name: "Classic Mojito",
