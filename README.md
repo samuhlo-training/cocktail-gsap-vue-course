@@ -25,10 +25,12 @@
 
 > **ABSTRACT:** A complete port of the GSAP Cocktail website to Vue 3. This project serves as a deep dive into using GSAP with Vue's Composition API, featuring a step-by-step commented codebase to explain the "why" and "how" of every animation.
 >
-> <br />
+> <br /> 
 >
 > **ORIGIN:** Based on the [GSAP Cocktail Course](https://www.youtube.com/watch?v=AW1yfBKRMKc) by [JavaScript Mastery](https://www.youtube.com/@javascriptmastery).
 > *Adapted to Vue 3 + TypeScript with extensive educational comments.*
+><br/><br />
+>**PLUS:** Also here its a template for GSAP Workshop Starter in Vue : [GSAP Workshop Starter](https://drive.google.com/file/d/1lWy5VyQkdk_8_v1WrdnMHaaazKNQtjLV/view?usp=sharing)
 
 ---
 
