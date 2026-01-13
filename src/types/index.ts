@@ -1,7 +1,7 @@
 /**
  * [MODULE] :: GLOBAL_TYPES
  * ----------------------------------------------------------------------
- * Core type definitions for the Mojito application.
+ * Core type definitions for the Cocktail GSAP Vue application.
  * Defines shapes for navigation, cocktail data, shop profiles, and store info.
  *
  * @module    types/index

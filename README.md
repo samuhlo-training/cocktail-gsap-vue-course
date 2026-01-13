@@ -2,7 +2,7 @@
   <br />
   <br />
   
-  # <code>MOJITO_GSAP_VUE</code>
+  # <code>COCKTAIL_GSAP_VUE_COURSE</code>
   
   **EDUCATIONAL VUE 3 CONVERSION / GSAP LABORATORY**
   
@@ -49,7 +49,7 @@
 
 ```bash
 # 1. Clone
-git clone https://github.com/samuhlo-training/mojito-gsap-course.git
+git clone https://github.com/samuhlo-training/cocktail-gsap-vue-course.git
 
 # 2. Install dependencies (pnpm enforced)
 pnpm install
