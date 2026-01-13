@@ -1,5 +1,97 @@
-# Vue 3 + TypeScript + Vite
+<div align="center">
+  <br />
+  <br />
+  
+  # <code>MOJITO_GSAP_VUE</code>
+  
+  **EDUCATIONAL VUE 3 CONVERSION / GSAP LABORATORY**
+  
+  <br />
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+  <img src="https://img.shields.io/badge/VUE_3-35495E?style=for-the-badge&logo=vue.js&logoColor=4FC08D" alt="Vue" />
+  <img src="https://img.shields.io/badge/GSAP-88CE02?style=for-the-badge&logo=greensock&logoColor=black" alt="GSAP" />
+  <img src="https://img.shields.io/badge/TYPESCRIPT-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
 
-Learn more about the recommended Project Setup and IDE Support in the [Vue Docs TypeScript Guide](https://vuejs.org/guide/typescript/overview.html#project-setup).
+
+  <br />
+  <br />
+</div>
+
+---
+
+### 00 __ PREVIEW
+
+![Hero Preview](public/readme/hero.png)
+
+> **ABSTRACT:** A complete port of the GSAP Cocktail website to Vue 3. This project serves as a deep dive into using GSAP with Vue's Composition API, featuring a step-by-step commented codebase to explain the "why" and "how" of every animation.
+>
+> <br />
+>
+> **ORIGIN:** Based on the [GSAP Cocktail Course](https://www.youtube.com/watch?v=AW1yfBKRMKc) by [JavaScript Mastery](https://www.youtube.com/@javascriptmastery).
+> *Adapted to Vue 3 + TypeScript with extensive educational comments.*
+
+---
+
+### 01 __ ARCHITECTURE & DECISIONS
+
+| COMPONENT | TECH | NOTE |
+| :--- | :--- | :--- |
+| **Core** | `Vue 3` | Composition API with `<script setup>`. |
+| **Motion** | `GSAP` | ScrollTrigger, SplitText (simulated/real), customized for Vue lifecycle. |
+| **Styles** | `Tailwind CSS v4` | Utility-first styling. |
+| **Typing** | `TypeScript` | Full type safety for components and GSAP contexts. |
+
+<br>
+
+### 02 __ INSTALLATION
+
+*Run local environment:*
+
+```bash
+# 1. Clone
+git clone https://github.com/samuhlo/mojito-gsap-course.git
+
+# 2. Install dependencies (pnpm enforced)
+pnpm install
+
+# 3. Ignite
+pnpm dev
+```
+
+### 03 __ EDUCATIONAL VALUE
+
+This tailored version focuses on the **Vue implementation** of complex GSAP timelines.
+
+#### A. VUE GSAP CONTEXT
+Example of how we handle GSAP cleanup and scoping in Vue 3:
+
+```typescript
+// Optimized for Vue's unmount lifecycle
+import { onMounted, onUnmounted, ref } from 'vue';
+import gsap from 'gsap';
+
+// .. inside component
+onMounted(() => {
+  const ctx = gsap.context(() => {
+    gsap.from('.element', {
+      scrollTrigger: { trigger: '.section' },
+      y: 100,
+      opacity: 0
+    });
+  }, mainContainer.value); // Scoped to component
+});
+
+onUnmounted(() => {
+  ctx.revert(); // Essential for SPA navigation
+});
+```
+
+<div align="center">
+
+
+<code>VUE ADAPTATION BY <a href='https://github.com/samuhlo'>samuhlo</a></code>
+<br>
+<small>Original Design & Concept by JavaScript Mastery</small>
+
+
+<small>Lugo, Galicia</small> </div>
