@@ -12,7 +12,7 @@
 // =====================================================================
 // [SECTION] :: IMPORTS
 // =====================================================================
-import { openingHours, socials, storeInfo } from "../../constants";
+import { openingHours, socials, storeInfo } from "../constants";
 import gsap from "gsap";
 import { onMounted, onUnmounted } from "vue";
 import { SplitText } from "gsap/all";

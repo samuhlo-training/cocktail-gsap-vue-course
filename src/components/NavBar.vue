@@ -13,7 +13,7 @@
 // [SECTION] :: IMPORTS
 // =====================================================================
 import { onMounted } from 'vue';
-import { navLinks } from '../../constants';
+import { navLinks } from '../constants';
 import gsap from 'gsap';
 
 // =====================================================================

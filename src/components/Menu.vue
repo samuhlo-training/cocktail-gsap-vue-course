@@ -13,7 +13,7 @@
 // [SECTION] :: IMPORTS
 // =====================================================================
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
-import { allCocktails } from '../../constants';
+import { allCocktails } from '../constants';
 import type { Cocktail } from '../types';
 import gsap from 'gsap';
 

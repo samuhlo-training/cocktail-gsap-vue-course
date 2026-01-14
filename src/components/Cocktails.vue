@@ -13,7 +13,7 @@
 // [SECTION] :: IMPORTS
 // =====================================================================
 import { onMounted } from 'vue';
-import { cocktailLists, mockTailLists } from '../../constants/'
+import { cocktailLists, mockTailLists } from '../constants/'
 import gsap from 'gsap';
 
 // =====================================================================

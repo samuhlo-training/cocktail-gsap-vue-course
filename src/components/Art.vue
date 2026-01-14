@@ -13,7 +13,7 @@
 // [SECTION] :: IMPORTS
 // =====================================================================
 import { onMounted, onUnmounted } from 'vue';
-import { goodLists, featureLists } from '../../constants';
+import { goodLists, featureLists } from '../constants';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 

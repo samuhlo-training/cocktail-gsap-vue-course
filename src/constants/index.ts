@@ -7,7 +7,7 @@ import type {
 	OpeningHour,
 	Social,
 	Cocktail
-} from '../src/types';
+} from '../types';
 
 const navLinks: NavLink[] = [
  {
