@@ -12,6 +12,7 @@
 // =====================================================================
 // [SECTION] :: IMPORTS
 // =====================================================================
+import { onMounted } from 'vue';
 import gsap from 'gsap';
 import { ScrollTrigger, SplitText } from 'gsap/all';
 import NavBar from "./components/NavBar.vue";
@@ -32,7 +33,10 @@ import Contact from "./components/Contact.vue";
  * - ScrollTrigger: For scroll-based animations.
  * - SplitText: For advanced text manipulation effects.
  */
-gsap.registerPlugin(ScrollTrigger, SplitText);
+onMounted(() => {
+    gsap.registerPlugin(ScrollTrigger, SplitText);
+});
+
 </script>
 
 <template>

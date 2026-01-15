@@ -21,7 +21,7 @@
 
 ### 00 __ PREVIEW
 
-![Hero Preview](public/readme/hero.png)
+![Hero Preview](public/readme/hero.webp)
 
 > **ABSTRACT:** A complete port of the GSAP Cocktail website to Vue 3. This project serves as a deep dive into using GSAP with Vue's Composition API, featuring a step-by-step commented codebase to explain the "why" and "how" of every animation.
 >
