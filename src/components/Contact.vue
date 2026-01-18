@@ -5,7 +5,13 @@
  * The application footer displaying contact info, hours, and social links.
  * Features an entrance animation triggered by scrolling.
  *
- * @module    components/Contact.vue
+ * TUTORIAL MODE:
+ * This component explores "Timeline Orchestration".
+ * 1. Synchronous Action: Using the '<' symbol to make tweens start together.
+ * 2. Nested Staggers: Sequencing text reveals (titles then paragraphs) for hierarchy.
+ * 3. Lifecycle Cleanup: Ensuring SplitText and Timelines are destroyed to avoid ghosts.
+ *
+ * @module components/Contact.vue
  * ----------------------------------------------------------------------
  */
 
@@ -24,9 +30,7 @@ const ANIM_STAGGER = 0.02;
 const LEAF_Y_OFFSET = '-50';
 const ANIM_DURATION = 1;
 
-// =====================================================================
-// [SECTION] :: COMPONENT STATE
-// =====================================================================
+// GSAP context for memory-safe resource cleanup
 let ctx: gsap.Context;
 
 // =====================================================================
@@ -35,18 +39,17 @@ let ctx: gsap.Context;
 
 /**
  * [ hook ] :: ON_MOUNTED
- * Sets up the footer entrance animation (text and decorative leaves).
+ * Sets up the footer reveal animation (text and decorative leaves).
  */
 onMounted(() => {
     ctx = gsap.context(() => {
-        // -----------------------------------------------------------------
-        // [ANIMATION] :: FOOTER_REVEAL
-        // Staggered reveal of text elements followed by leaf movement.
-        // -----------------------------------------------------------------
+        // [STEP 1] :: TEXT_PREP
+        // Split text for staggered reveal.
         const titleSplit = new SplitText("#contact h2", {
             type: "words",
         })
 
+        // [STEP 2] :: FOOTER_TIMELINE
         const timeline = gsap.timeline({
             scrollTrigger: {
                 trigger: '#contact',
@@ -55,31 +58,37 @@ onMounted(() => {
             ease: "power1.inOut"
         })
         
+        // [ANIM] :: TITLES_REVEAL
         timeline
             .from(titleSplit.words, {
                 opacity: 0, 
                 yPercent: 100, 
                 stagger: ANIM_STAGGER
             })
+            // [ANIM] :: DETAILS_REVEAL
             .from('#contact h3, #contact p', {
                 opacity: 0, 
                 yPercent: 100, 
                 stagger: ANIM_STAGGER
             })
+            
+        // [ANIM] :: LEAF_ENTRANCE
+        timeline
             .to('#f-right-leaf', {
                 y: LEAF_Y_OFFSET, 
                 duration: ANIM_DURATION, 
                 ease: 'power1.inOut'
             })
-            // WHY THE '<' SYMBOL?
-            // This is a POSITION PARAMETER. '<' means "start at the same time as the START of the PREVIOUS animation".
-            // So, #f-left-leaf starts moving at the exact same moment as #f-right-leaf.
-            // Without this, they would move sequentially (one after the other).
             .to('#f-left-leaf', {
                 y: LEAF_Y_OFFSET, 
                 duration: ANIM_DURATION, 
                 ease: 'power1.inOut'
-            }, '<') // Run concurrently with previous tween
+            }, '<') 
+            /**
+             * WHY THE '<' SYMBOL?
+             * This is a POSITION PARAMETER. It means "start at the same time as the previous tween".
+             * This ensures the left and right leaves move UP simultaneously rather than one by one.
+             */
     })
 })
 
@@ -96,28 +105,30 @@ onUnmounted(() => {
 <template>
     <!-- [CONTAINER] :: FOOTER_ROOT -->
     <footer id="contact">
-        <!-- [DECORATION] :: LEAVES -->
+        
+        <!-- [DECORATION] :: ENTRANCE_LEAVES -->
         <img src="/images/footer-right-leaf.png" alt="leaf-right" id="f-right-leaf" />
         <img src="/images/footer-left-leaf.png" alt="leaf-left" id="f-left-leaf" />
         
-        <!-- [CONTENT] :: INFO_GRID -->
+        <!-- [BLOCK] :: INFORMATION_GRID -->
         <div class="content">
+            <!-- [ELEMENT] :: MAIN_HEADING -->
             <h2>{{ storeInfo.heading }}</h2>
             
-            <!-- [GROUP] :: ADDRESS -->
+            <!-- [GROUP] :: LOCATION_DETAILS -->
             <div>
                 <h3>Visit Our Bar</h3>
                 <p>{{ storeInfo.address }}</p>
             </div>
             
-            <!-- [GROUP] :: CONTACT_DETAILS -->
+            <!-- [GROUP] :: CONTACT_INFO -->
             <div>
                 <h3>Contact Us</h3>
                 <p>{{ storeInfo.contact.phone }}</p>
                 <p>{{ storeInfo.contact.email }}</p>
             </div>
             
-            <!-- [GROUP] :: OPENING_HOURS -->
+            <!-- [GROUP] :: BUSINESS_HOURS -->
             <div>
                 <h3>Open Every Day</h3>
                 <div>
@@ -127,7 +138,7 @@ onUnmounted(() => {
                 </div>
             </div>
             
-            <!-- [GROUP] :: SOCIAL_LINKS -->
+            <!-- [GROUP] :: SOCIAL_NETWORK_LINKS -->
             <div>
                 <h3>Socials</h3>
                 

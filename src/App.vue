@@ -2,10 +2,15 @@
 /**
  * [COMPONENT] :: APP_ROOT
  * ----------------------------------------------------------------------
- * The root component of the application.
- * Orchestrates the main layout and registers global GSAP specific plugins.
+ * The main entry point of the Vue application.
+ * It serves as the layout orchestrator, stacking all major sections
+ * of the landing page and initializing global GSAP plugins.
  *
- * @module    src/App.vue
+ * TUTORIAL MODE:
+ * This component demonstrates how to register GSAP plugins globally 
+ * so they are available throughout the component tree.
+ *
+ * @module src/App.vue
  * ----------------------------------------------------------------------
  */
 
@@ -15,6 +20,8 @@
 import { onMounted } from 'vue';
 import gsap from 'gsap';
 import { ScrollTrigger, SplitText } from 'gsap/all';
+
+// Components
 import NavBar from "./components/NavBar.vue";
 import Hero from "./components/Hero.vue";
 import Cocktails from "./components/Cocktails.vue"; 
@@ -24,14 +31,14 @@ import Menu from "./components/Menu.vue";
 import Contact from "./components/Contact.vue";
 
 // =====================================================================
-// [SECTION] :: CONFIGURATION
+// [SECTION] :: LIFECYCLE
 // =====================================================================
 
 /**
  * [INIT] :: REGISTER_PLUGINS
- * Registers core GSAP plugins globally for use in child components.
- * - ScrollTrigger: For scroll-based animations.
- * - SplitText: For advanced text manipulation effects.
+ * Hooks into the mounting phase to prepare GSAP.
+ * - ScrollTrigger: Enables scroll-based animation logic.
+ * - SplitText: Allows breaking strings into characters/words for animation.
  */
 onMounted(() => {
     gsap.registerPlugin(ScrollTrigger, SplitText);
@@ -41,17 +48,30 @@ onMounted(() => {
 
 <template>
     <!-- 
-    [LAYOUT] :: MAIN_CONTAINER
-    Sequential stacking of landing page sections.
+    [BLOCK] :: MAIN_LAYOUT
+    The single-page structure where sections are stacked vertically.
     -->
     <main>
-       <NavBar />
-       <Hero />
-       <Cocktails />
-       <About />
-       <Art />
-       <Menu />
-       <Contact />
+        <!-- [ELEMENT] :: NAVIGATION -->
+        <NavBar />
+
+        <!-- [ELEMENT] :: HERO_LANDING -->
+        <Hero />
+
+        <!-- [ELEMENT] :: FEATURED_LISTS -->
+        <Cocktails />
+
+        <!-- [ELEMENT] :: MASONRY_ABOUT -->
+        <About />
+
+        <!-- [ELEMENT] :: ART_MASK_REVEAL -->
+        <Art />
+
+        <!-- [ELEMENT] :: RECIPE_CAROUSEL -->
+        <Menu />
+
+        <!-- [ELEMENT] :: CONTACT_FOOTER -->
+        <Contact />
     </main>
 </template>
 

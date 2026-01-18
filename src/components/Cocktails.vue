@@ -5,11 +5,17 @@
  * Displays lists of popular cocktails and mocktails.
  * Features a scroll-triggered parallax animation for decorative leaves.
  *
- * @module    components/Cocktails.vue
+ * TUTORIAL MODE:
+ * This component focuses on "Parallax Mechanics".
+ * 1. Offset Logic: Starting elements outside their natural position to create motion.
+ * 2. Scrubbed Timelines: Making the animation speed feel exactly like the user's scroll speed.
+ * 3. Directional Depth: Moving elements in opposing directions to simulate a 3D space.
+ *
+ * @module components/Cocktails.vue
  * ----------------------------------------------------------------------
  */
 
-// =====================================================================
+// ================= ====================================================
 // [SECTION] :: IMPORTS
 // =====================================================================
 import { onMounted } from 'vue';
@@ -22,53 +28,54 @@ import gsap from 'gsap';
 
 /**
  * [ hook ] :: ON_MOUNTED
- * Sets up the scroll-linked parallax effect for the background leaves.
+ * Sets up the scroll-linked movement for the background leaves.
  */
 onMounted(() => {
     // -----------------------------------------------------------------
-    // [ANIMATION] :: PARALLAX_EFFECT
-    // Moves leaves in opposite directions as the user scrolls through the section.
+    // [ANIMATION] :: PARALLAX_CORE
+    // WHY USE A TIMELINE?
+    // It allows us to group multiple leaf movements under a single scroll control.
     // -----------------------------------------------------------------
     const parallaxTimeline = gsap.timeline({
         scrollTrigger: {
             trigger: '#cocktails',
-            start: 'top 30%',
-            end: 'bottom 80%',
-            scrub: true,
+            start: 'top 30%', // Begin when section is 30% into the viewport
+            end: 'bottom 80%', // Finish when bottom is 80% up
+            scrub: true,       // Links movement 1:1 with scroll distance
         }
     })
 
-    const OFFSET_VAL = 100;
+    const OFFSET_VAL = 100; // The amount of "extra" distance the leaves travel
 
-    // HOW PARALLAX WORKS HERE:
-    // We use .from() to define a starting position that is DIFFERENT from the CSS position.
-    // 'scrub: true' means that as we scroll, the elements move FROM these coordinates
-    // TO their natural CSS position (0,0).
+    // [STRATEGY] :: MOTION_FROM_OFFSET
+    // We use .from() to define where the leaves come FROM.
+    // As you scroll, they move TOWARDS their natural CSS positions (0,0).
     parallaxTimeline
         .from('#c-left-leaf', {
-            x: -OFFSET_VAL, // Starts 100px to the left
-            y: OFFSET_VAL   // Starts 100px down
+            x: -OFFSET_VAL, // Starts shifted to the left
+            y: OFFSET_VAL   // Starts shifted downwards
         })
         .from('#c-right-leaf', {
-            x: OFFSET_VAL,  // Starts 100px to the right
-            y: OFFSET_VAL   // Starts 100px down
-        })
-        // RESULT: As you scroll down, both leaves will appear to rise up and move inward.
+            x: OFFSET_VAL,  // Starts shifted to the right
+            y: OFFSET_VAL   // Starts shifted downwards
+        }, 0) // The '0' makes both leaves move at the same time
 })
 </script>
 
 
 <template>
-    <!-- [CONTAINER] :: SECTION_ROOT -->
+    <!-- [CONTAINER] :: COCKTAILS_ROOT -->
     <section id="cocktails" className="noisy">
-        <!-- [DECORATION] :: LEAVES -->
-        <img src="/images/cocktail-left-leaf.png" alt="l-leaf" id="c-left-leaf" />
-        <img src="/images/cocktail-right-leaf.png" alt="r-leaf" id="c-right-leaf" />
+        
+        <!-- [DECORATION] :: PARALLAX_LEAVES -->
+        <!-- These move relative to the scroll position -->
+        <img src="/images/cocktail-left-leaf.png" alt="Decorative leaf left" id="c-left-leaf" />
+        <img src="/images/cocktail-right-leaf.png" alt="Decorative leaf right" id="c-right-leaf" />
 
-        <!-- [CONTENT] :: LIST_WRAPPER -->
+        <!-- [BLOCK] :: MENU_LISTINGS_WRAPPER -->
         <div className="list">
             
-            <!-- [GROUP] :: POPULAR_COCKTAILS -->
+            <!-- [GROUP] :: CATEGORY_POPULAR_COCKTAILS -->
             <div className="popular">
                 <h2>Most popular cocktails:</h2>
 
@@ -83,7 +90,7 @@ onMounted(() => {
                 </ul>
             </div>
 
-            <!-- [GROUP] :: MOCKTAILS -->
+            <!-- [GROUP] :: CATEGORY_LOVED_MOCKTAILS -->
             <div className="loved">
                 <h2>Most loved mocktails:</h2>
 

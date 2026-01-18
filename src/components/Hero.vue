@@ -5,7 +5,13 @@
  * The landing section of the application featuring a video background,
  * split-text animations, and parallax effects on scroll.
  *
- * @module    components/Hero.vue
+ * TUTORIAL MODE:
+ * This component showcases advanced GSAP techniques:
+ * 1. SplitText: Breaking down typography for per-character animation.
+ * 2. Video Scrubbing: Linking video playback directly to scroll position.
+ * 3. Parallax: Moving elements at different speeds to create depth.
+ *
+ * @module components/Hero.vue
  * ----------------------------------------------------------------------
  */
 
@@ -16,7 +22,7 @@ import { ref, onMounted, onUnmounted } from 'vue';
 import gsap from 'gsap';
 import { ScrollTrigger, SplitText } from 'gsap/all';
 
-
+// [GSAP] Register required plugins
 gsap.registerPlugin(ScrollTrigger, SplitText);
 
 // =====================================================================
@@ -26,7 +32,7 @@ const TEXT_ANIM_DURATION = 1.8;
 const TEXT_ANIM_STAGGER  = 0.06;
 const TEXT_DELAY         = 1;
 
-// Parallax movement values
+// Parallax movement values (displacement on scroll)
 const P_RIGHT_LEAF_Y = 200;
 const P_LEFT_LEAF_Y  = -200;
 const P_ARROW_Y      = 100;
@@ -35,6 +41,8 @@ const P_ARROW_Y      = 100;
 // [SECTION] :: COMPONENT STATE
 // =====================================================================
 const videoRef = ref<HTMLVideoElement | null>(null);
+
+// GSAP context for memory-safe resource cleanup
 let ctx: gsap.Context;
 
 // =====================================================================
@@ -43,55 +51,38 @@ let ctx: gsap.Context;
 
 /**
  * [ hook ] :: ON_MOUNTED
- * Initializes GSAP context, text animations, and scroll-triggered video control.
+ * Initializes GSAP context and all entrance/scroll animations.
  *
  * WHY USE GSAP.CONTEXT?
- * In Vue (and React), components can mount/unmount rapidly. GSAP animations tailored
- * to a component need to be cleaned up to avoid memory leaks or conflicts.
- * gsap.context() groups all GSAP tweens/timelines/triggers created within its scope,
- * allowing us to easily revert (kill) them all at once in onUnmounted.
+ * It groups all GSAP tweens/triggers created within its scope,
+ * allowing us to easily revert (kill) them all at once in onUnmounted
+ * to prevent memory leaks in Single Page Applications (SPAs).
  */
 onMounted(() => {
   ctx = gsap.context(() => {
     // -----------------------------------------------------------------
-    // [ANIMATION] :: TEXT_SPLIT
+    // [ANIMATION] :: TEXT_REVEAL
     // Splits title and subtitle for staggered entrance effects.
-    //
-    // HOW IT WORKS:
-    // SplitText breaks the target DOM elements into arrays of characters, words, or lines.
-    // This allows us to animate each piece individually (e.g. staggering characters).
-    //
-    // WHY TWO SPLITS?
-    // 1. 'chars, words' for the main title allows detailed per-letter animation.
-    // 2. 'lines' for the subtitle keeps the text readable while animating blocks.
     // -----------------------------------------------------------------
-    const heroSplit = new SplitText(".title", {
-      type: "chars, words",
-    });
+    
+    // Create SplitText instances
+    const heroSplit = new SplitText(".title", { type: "chars, words" });
+    const paragraphSplit = new SplitText(".subtitle", { type: "lines" });
 
-    const paragraphSplit = new SplitText(".subtitle", {
-      type: "lines",
-    });
-
-    // Apply text-gradient class to each character of the title
+    // Apply custom styling class to characters
     heroSplit.chars.forEach((char) => char.classList.add("text-gradient"));
 
-    // Animate Title
-    //
-    // WHY EXPO.OUT?
-    // 'expo.out' starts fast and decelerates, giving a snappy, premium feel.
-    //
-    // WHY STAGGER?
-    // 'stagger: 0.06' creates a delay of 0.06s between each character's start time,
-    // creating a wave-like fluid motion from left to right.
+    // [ANIM] :: TITLE_ENTRANCE
+    // Starts fast and decelerates (expo.out) for a premium feel.
     gsap.from(heroSplit.chars, {
-      yPercent: 100, // Move from 100% of its height below (visual entrance)
+      yPercent: 100, // Move up from below
       duration: TEXT_ANIM_DURATION,
       ease: "expo.out",
       stagger: TEXT_ANIM_STAGGER,
     });
 
-    // Animate Subtitle
+    // [ANIM] :: SUBTITLE_ENTRANCE
+    // Delayed reveal to ensure focus stays on the main title first.
     gsap.from(paragraphSplit.lines, {
       opacity: 0,
       yPercent: 100,
@@ -103,38 +94,23 @@ onMounted(() => {
 
     // -----------------------------------------------------------------
     // [ANIMATION] :: PARALLAX_SCROLL
-    // Moves decorative elements (leaves, arrow) at different speeds.
-    //
-    // HOW IT WORKS:
-    // We link the timeline to the scroll position using 'scrub: true'.
-    // As the user scrolls from 'top top' (top of hero at top of viewport)
-    // to 'bottom top' (bottom of hero at top of viewport), the timeline plays.
-    //
-    // WHY THE '0' POSITION PARAMETER?
-    // .to(..., 0) tells GSAP to insert this tween at the absolute start (time 0) of the timeline.
-    // This ensures all three elements (right-leaf, left-leaf, arrow) move SIMULTANEOUSLY
-    // as the user scrolls, rather than one after another.
+    // Moves decorative leaves at different speeds to create a 3D effect.
     // -----------------------------------------------------------------
     gsap.timeline({
         scrollTrigger: {
           trigger: "#hero",
           start: "top top",
           end: "bottom top",
-          scrub: true, // Smoothly links animation progress to scrollbar
+          scrub: true, // Links animation progress to scroll distance
         },
       })
       .to(".right-leaf", { y: P_RIGHT_LEAF_Y }, 0)
       .to(".left-leaf", { y: P_LEFT_LEAF_Y }, 0)
-      .to(".arrow", { y: P_ARROW_Y }, 0);
+      .to(".arrow", { y: P_ARROW_Y }, 0); // All three start at 0s on the timeline
 
     // -----------------------------------------------------------------
-    // [ANIMATION] :: VIDEO_CONTROL
-    // Syncs video playback with scroll position. Handles responsive start/end points.
-    //
-    // WHY MATCHMEDIA?
-    // Values like 'start' and 'end' often need to be different on mobile vs desktop
-    // to account for screen size differences. gsap.matchMedia() lets us define
-    // breakpoint-specific logic that automatically kills/recreates animations on resize.
+    // [ANIMATION] :: VIDEO_SYNC
+    // Maps the video's 'currentTime' to the scroll progress.
     // -----------------------------------------------------------------
     const mm = gsap.matchMedia();
 
@@ -143,39 +119,40 @@ onMounted(() => {
       isDesktop: "(min-width: 768px)",
     }, (context) => {
       const { isMobile } = context.conditions as { isMobile: boolean };
-      // Mobile needs a faster trigger because the section is shorter visually
+      
+      // Pivot points change depending on screen size
       const startValue = isMobile ? "top 50%" : "center 60%";
       const endValue = isMobile ? "120% top" : "bottom top";
 
       const tl = gsap.timeline({
         scrollTrigger: {
-          trigger: "video", // targeting the video tag directly
+          trigger: "video",
           start: startValue,
           end: endValue,
           scrub: true,
-          pin: true, // 'pin: true' keeps the video element fixed in place while scrolling through the trigger area
+          pin: true, // Fixes the video in place while scrubbing
         },
       });
 
-      // Ensure metadata is loaded for duration
+      /**
+       * [SYNC] :: CURRENT_TIME_LINK
+       * Logic to update video frame based on scroll.
+       */
       const initVideoAnim = () => {
         if (videoRef.value && videoRef.value.duration) {
-          // HOW IT WORKS:
-          // We animate the 'currentTime' property of the video element from 0 to its duration.
-          // Because 'scrub: true' is set on the scrollTrigger, the video's current time
-          // is perfectly synced to the scroll position.
           tl.to(videoRef.value, {
             currentTime: videoRef.value.duration,
-            ease: "none", // important for scrubbing: linear movement = smoother seeking
+            ease: "none", // Linear mapping is crucial for smooth seeking
           });
         }
       };
 
+      // Ensure video duration is known before creating the tween
       if (videoRef.value) {
         if (videoRef.value.readyState >= 1) {
           initVideoAnim();
         } else {
-          videoRef.value.onloadedmetadata = initVideoAnim; // Wait for duration data
+          videoRef.value.onloadedmetadata = initVideoAnim;
         }
       }
     });
@@ -184,7 +161,7 @@ onMounted(() => {
 
 /**
  * [ hook ] :: ON_UNMOUNTED
- * Cleans up GSAP context to prevent memory leaks or conflict.
+ * Mandatory cleanup for GSAP context.
  */
 onUnmounted(() => {
   ctx?.revert();
@@ -192,9 +169,13 @@ onUnmounted(() => {
 </script>
 
 <template>
+  <!-- [CONTAINER] :: HERO_ROOT -->
   <section id="hero" class="noisy">
+    
+    <!-- [ELEMENT] :: MAIN_TITLE -->
     <h1 class="title">MOJITO</h1>
 
+    <!-- [DECORATION] :: FLOATING_LEAVES -->
     <img
       src="/images/hero-left-leaf.png"
       alt="left-leaf"
@@ -206,10 +187,10 @@ onUnmounted(() => {
       class="right-leaf"
     />
 
+    <!-- [BLOCK] :: CONTENT_OVERLAY -->
     <div class="body">
-      <!-- <img src="/images/arrow.png" alt="arrow" class="arrow" /> -->
-
       <div class="content">
+        <!-- Desktop Lead-in -->
         <div class="space-y-5 hidden md:block">
           <p>Cool. Crisp. Classic.</p>
           <p class="subtitle">
@@ -217,6 +198,7 @@ onUnmounted(() => {
           </p>
         </div>
 
+        <!-- Call to Action Area -->
         <div class="view-cocktails">
           <p class="subtitle">
             Every cocktail on our menu is a blend of premium ingredients,
@@ -229,6 +211,7 @@ onUnmounted(() => {
     </div>
   </section>
 
+  <!-- [BLOCK] :: PARALLAX_VIDEO_BACKGROUND -->
   <div class="video absolute inset-0">
     <video
       ref="videoRef"

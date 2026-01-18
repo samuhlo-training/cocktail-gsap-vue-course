@@ -5,7 +5,13 @@
  * "About Us" section featuring a text introduction and a masonry-like
  * grid of images that animate in on scroll.
  *
- * @module    components/About.vue
+ * TUTORIAL MODE:
+ * This component demonstrates:
+ * 1. Scroll-Triggered Timelines: Triggering animations when a section enters view.
+ * 2. Staggered Arrays: Animating multiple DOM elements (text and images) in a sequence.
+ * 3. Position Parameters: Fine-tuning the timing overlap between timeline tweens.
+ *
+ * @module components/About.vue
  * ----------------------------------------------------------------------
  */
 
@@ -22,21 +28,24 @@ import { SplitText } from 'gsap/all';
 
 /**
  * [ hook ] :: ON_MOUNTED
- * Triggers the entrance animation for text and the image grid.
+ * Orchestrates the entrance animation for text and the masonry grid.
  */
 onMounted(() => {
     // -----------------------------------------------------------------
-    // [ANIMATION] :: TEXT_REVEAL
-    // Splits the heading into words for individual animation.
+    // [ANIMATION] :: ASSET_PREPARATION
+    // Splits the heading into individual words for more granular control.
     // -----------------------------------------------------------------
     const titleSplit = SplitText.create('#about h2', {
         type: 'words'
     })
     
+    // -----------------------------------------------------------------
+    // [ANIMATION] :: ENTRANCE_TIMELINE
     // WHY SCROLLTRIGGER?
-    // We want these elements to appear ONLY when the user reaches this section.
-    // 'start: "top center"' means the animation begins when the TOP of the #about section
-    // hits the CENTER of the viewport. This is a good "reading" position.
+    // We want elements to appear ONLY when the user reaches this section.
+    // 'start: "top center"' means the animation begins when the TOP of the section
+    // hits the CENTER of the viewport.
+    // -----------------------------------------------------------------
     const scrollTimeline = gsap.timeline({
         scrollTrigger: {
             trigger: '#about',
@@ -44,38 +53,44 @@ onMounted(() => {
         }
     })
 
-    // Sequence: Heading Words -> Grid Images
+    // [STEP 1] :: TEXT_REVEAL
+    // Words slide up and fade in with a tiny stagger for a rippling effect.
     scrollTimeline
         .from(titleSplit.words, {
             opacity: 0, 
             duration: 1, 
             yPercent: 100, 
             ease: 'expo.out', 
-            stagger: 0.02 // A tiny delay between each word creates a rippling text effect
+            stagger: 0.02 
         })
-        // HOW SELECTORS WORK:
-        // GSAP can target multiple groups of elements at once. 
-        // Here we select all divs inside .top-grid AND .bottom-grid simultaneously.
+        
+    // [STEP 2] :: MASONRY_GRID_REVEAL
+    // Targets multiple groups (.top-grid and .bottom-grid) simultaneously.
+    scrollTimeline
         .from('.top-grid div, .bottom-grid div', {
             opacity: 0, 
             duration: 1, 
             ease: 'power1.inOut', 
-            stagger: 0.04, // Stagger each image's appearance for a cascading grid effect
+            stagger: 0.04, 
         }, '-=0.5') 
-        // ^ WHAT IS '-=0.5'?
-        // This is the POSITION PARAMETER. It tells the timeline to start this animation
-        // 0.5 seconds BEFORE the previous animation (the text reveal) finishes.
-        // This overlap makes the whole sequence feel faster and more fluid.
+        /**
+         * WHY '-=0.5'?
+         * This is a POSITION PARAMETER. It tells the timeline to start this animation
+         * 0.5 seconds BEFORE the previous one finishes.
+         * This overlap makes the transition feel more fluid and less "robotic".
+         */
 })
 
 </script>
 
 <template>
-    <!-- [CONTAINER] :: ABOUT_SECTION_ROOT -->
+    <!-- [CONTAINER] :: ABOUT_ROOT -->
     <div id="about">
-        <!-- [SUB-SECTION] :: TEXT_CONTENT -->
+        
+        <!-- [BLOCK] :: TEXT_CONTENT_WRAPPER -->
         <div className="mb-16 md:px-0 px-5">
             <div className="content">
+                <!-- [GROUP] :: HEADING -->
                 <div className="md:col-span-8">
                     <p className="badge">Best Cocktails</p>
                     <h2>
@@ -84,6 +99,7 @@ onMounted(() => {
                     </h2>
                 </div>
 
+                <!-- [GROUP] :: SOCIAL_PROOF -->
                 <div className="sub-content">
                     <p>
                         Every cocktail we serve is a reflection of our obsession with detail — from the first muddle to
@@ -102,34 +118,36 @@ onMounted(() => {
             </div>
         </div>
 
-        <!-- [SUB-SECTION] :: IMAGE_GRID_TOP -->
+        <!-- [BLOCK] :: MASONRY_IMAGE_GRID -->
+        
+        <!-- [GROUP] :: TOP_ROW -->
         <div className="top-grid">
             <div className="md:col-span-3">
                 <div className="noisy" />
-                <img src="/images/abt1.png" alt="grid-img-1" />
+                <img src="/images/abt1.png" alt="Interior view" />
             </div>
 
             <div className="md:col-span-6">
                 <div className="noisy" />
-                <img src="/images/abt2.png" alt="grid-img-2" />
+                <img src="/images/abt2.png" alt="Cocktail preparation" />
             </div>
 
             <div className="md:col-span-3">
                 <div className="noisy" />
-                <img src="/images/abt1.png" alt="grid-img-5" />
+                <img src="/images/abt1.png" alt="Bar detail" />
             </div>
         </div>
 
-        <!-- [SUB-SECTION] :: IMAGE_GRID_BOTTOM -->
+        <!-- [GROUP] :: BOTTOM_ROW -->
         <div className="bottom-grid">
             <div className="md:col-span-8">
                 <div className="noisy" />
-                <img src="/images/abt3.png" alt="grid-img-3" />
+                <img src="/images/abt3.png" alt="Wide atmosphere" />
             </div>
 
             <div className="md:col-span-4">
                 <div className="noisy" />
-                <img src="/images/abt4.png" alt="grid-img-4" />
+                <img src="/images/abt4.png" alt="Close-up garnish" />
             </div>
         </div>
 

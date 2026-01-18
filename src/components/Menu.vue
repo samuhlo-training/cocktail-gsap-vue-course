@@ -5,11 +5,18 @@
  * Interactive carousel for viewing detailed cocktail recipes.
  * Features circular navigation, animations on slide change, and responsive layout.
  *
- * @module    components/Menu.vue
+ * TUTORIAL MODE:
+ * This component explores "Reactive vs Imperative" logic.
+ * 1. Reactive State: Vue handles the data (index, strings, image paths) automatically.
+ * 2. Circular Indexing: Using the modulo operator (%) to create an infinite loop.
+ * 3. Imperative Tweens: Triggering GSAP manually via 'watch' because animations 
+ *    cannot be purely declarative when they depend on timing.
+ *
+ * @module components/Menu.vue
  * ----------------------------------------------------------------------
  */
 
-// =====================================================================
+// ================= ====================================================
 // [SECTION] :: IMPORTS
 // =====================================================================
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
@@ -31,12 +38,11 @@ const ANIM_DURATION = 1;
 /**
  * [CALC] :: CURRENT_COCKTAIL
  * Returns the cocktail object for the active slide.
- * Handles circular indexing wrapping.
- *
- * HOW IT WORKS (Circular Logic):
+ * 
+ * [STRATEGY] :: CIRCULAR_LOGIC
  * (currentIndex + total) % total
- * 1. If index is 0 and we go BACK (-1), (-1 + 5) % 5 = 4. Wraps to end.
- * 2. If index is 4 and we go NEXT (5), (5 + 5) % 5 = 0. Wraps to start.
+ * 1. If index is -1, (-1 + 5) % 5 = 4. Wraps perfectly to the end.
+ * 2. If index is 5, (5 + 5) % 5 = 0. Wraps perfectly to the start.
  */
 const currentCocktail = computed<Cocktail>(() => {
     return allCocktails[(currentIndex.value + totalCocktails) % totalCocktails] as Cocktail;
@@ -44,7 +50,7 @@ const currentCocktail = computed<Cocktail>(() => {
 
 /**
  * [CALC] :: PREV_COCKTAIL
- * Returns the cocktail for the "Previous" button label.
+ * Helper for the "Previous" button label.
  */
 const prevCocktail = computed<Cocktail>(() => {
     return allCocktails[(currentIndex.value - 1 + totalCocktails) % totalCocktails] as Cocktail;
@@ -52,7 +58,7 @@ const prevCocktail = computed<Cocktail>(() => {
 
 /**
  * [CALC] :: NEXT_COCKTAIL
- * Returns the cocktail for the "Next" button label.
+ * Helper for the "Next" button label.
  */
 const nextCocktail = computed<Cocktail>(() => {
     return allCocktails[(currentIndex.value + 1 + totalCocktails) % totalCocktails] as Cocktail;
@@ -64,42 +70,39 @@ const nextCocktail = computed<Cocktail>(() => {
 
 /**
  * [ACTION] :: GO_TO_SLIDE
- * Updates the current index to the specified slide number.
- * 
- * @param index - The target index to navigate to.
+ * Logic to jump to a specific cocktail.
+ * @param index - The target position.
  */
 const goToSlide = (index: number) => {
     currentIndex.value = (index + totalCocktails) % totalCocktails;
 };
 
 /**
- * [ANIMATION] :: SLIDE_TRANSITION
- * Animates the entrance of the new slide's content elements.
- * Resets opacity and position before fading/sliding in.
+ * [ANIMATION] :: EXECUTE_TRANSITION
+ * Resets and then slides in the content elements.
+ * 
+ * WHY NOT USE <transition>?
+ * While Vue's <transition> is great for simple entries, GSAP gives us
+ * professional-grade control over specific properties like xPercent 
+ * and ease curves for each sub-element.
  */
 const animateSlide = () => {
-    // Animate Recipe Title
+    // Reveal Recipe Title
     gsap.fromTo('#title', 
         { opacity: 0 }, 
         { opacity: 1, duration: ANIM_DURATION }
     );
     
-    // Animate Cocktail Image
+    // Slide in the product image from the left
     gsap.fromTo('.cocktail img', 
         { opacity: 0, xPercent: -100 }, 
         { xPercent: 0, opacity: 1, duration: ANIM_DURATION, ease: 'power1.inOut' }
     );
     
-    // Animate Description Heading
-    gsap.fromTo('.details h2', 
+    // Pop up the text details from the bottom
+    gsap.fromTo('.details h2, .details p', 
         { yPercent: 100, opacity: 0 }, 
-        { yPercent: 0, opacity: 1, ease: 'power1.inOut' }
-    );
-    
-    // Animate Description Text
-    gsap.fromTo('.details p', 
-        { yPercent: 100, opacity: 0 }, 
-        { yPercent: 0, opacity: 1, ease: 'power1.inOut' }
+        { yPercent: 0, opacity: 1, ease: 'power1.inOut', stagger: 0.1 }
     );
 };
 
@@ -108,47 +111,45 @@ const animateSlide = () => {
 // =====================================================================
 
 /**
- * [WATCH] :: ON_INDEX_CHANGE
- * Triggers the slide transition animation whenever the active slide changes.
- *
- * WHY WATCH?
- * Vue's reactivity system updates the DOM automatically (image src, text).
- * However, GSAP animations are imperative. We need to explicitly tell GSAP
- * "Play this animation NOW because the index just changed."
+ * [WATCH] :: TRANSITION_TRIGGER
+ * We "watch" the index. Every time it changes (via button click),
+ * we manually fire the GSAP animation function.
  */
 watch(currentIndex, () => {
     animateSlide();
 });
 
 onMounted(() => {
-    // Initial animation when component mounts
+    // Fire the first time to show the initial slide
     animateSlide();
 });
 
 onUnmounted(() => {
-   // Cleanup GSAP tweens on unmount
+   // Kill active tweens to prevent them from trying to animate non-existent DOM nodes
    gsap.killTweensOf(['#title', '.cocktail img', '.details h2', '.details p']);
 });
 
 </script>
 
 <template>
-    <!-- [CONTAINER] :: CAROUSEL_ROOT -->
+    <!-- [CONTAINER] :: MENU_ROOT -->
     <section id="menu" aria-labelledby="menu-heading">
-        <!-- [DECORATION] :: LEAVES -->
-        <img src="/images/slider-left-leaf.png" alt="left-leaf" id="m-left-leaf" />
-        <img src="/images/slider-right-leaf.png" alt="right-leaf" id="m-right-leaf" />
+        
+        <!-- [DECORATION] :: STATIC_LEAVES -->
+        <img src="/images/slider-left-leaf.png" alt="Decoration leaf" id="m-left-leaf" />
+        <img src="/images/slider-right-leaf.png" alt="Decoration leaf" id="m-right-leaf" />
 
         <h2 id="menu-heading" class="sr-only">
-            Cocktail Menu
+            Interactive Cocktail Menu
         </h2>
 
-        <!-- [NAV] :: TABS -->
+        <!-- [NAV] :: CATEGORY_SELECTOR_TABS -->
         <nav class="cocktail-tabs" aria-label="Cocktail Navigation">
             <button 
                 v-for="(cocktail, index) in allCocktails" 
                 :key="cocktail.id" 
                 @click="goToSlide(index)"
+                :aria-current="index === currentIndex ? 'true' : 'false'"
                 :class="[
                     index === currentIndex 
                     ? 'text-white border-white' 
@@ -159,28 +160,30 @@ onUnmounted(() => {
             </button>
         </nav>
 
-        <!-- [CONTENT] :: MAIN_SLIDE -->
+        <!-- [BLOCK] :: ACTIVE_SLIDE_CONTENT -->
         <div class="content">
             
-            <!-- [NAV] :: ARROW_CONTROLS -->
+            <!-- [GROUP] :: ARROW_CONTROLS_OVERLAY -->
             <div class="arrows">
-                <button class="text-left" @click="goToSlide(currentIndex - 1)">
+                <!-- PREV BUTTON -->
+                <button class="text-left" @click="goToSlide(currentIndex - 1)" :aria-label="`Go to ${prevCocktail.name}`">
                     <span>{{ prevCocktail.name }}</span>
-                    <img src="/images/right-arrow.png" alt="right-arrow" aria-hidden="true" />
+                    <img src="/images/right-arrow.png" alt="arrow icon" aria-hidden="true" />
                 </button>
 
-                <button class="text-left" @click="goToSlide(currentIndex + 1)">
+                <!-- NEXT BUTTON -->
+                <button class="text-left" @click="goToSlide(currentIndex + 1)" :aria-label="`Go to ${nextCocktail.name}`">
                     <span>{{ nextCocktail.name }}</span>
-                    <img src="/images/left-arrow.png" alt="left-arrow" aria-hidden="true" />
+                    <img src="/images/left-arrow.png" alt="arrow icon" aria-hidden="true" />
                 </button>
             </div>
 
-            <!-- [IMAGE] :: COCKTAIL_VISUAL -->
+            <!-- [ELEMENT] :: PRODUCT_VISUAL -->
             <div class="cocktail">
-                <img :src="currentCocktail.image" class="object-contain" :alt="currentCocktail.name"/>
+                <img :src="currentCocktail.image" class="object-contain" :alt="`Image of ${currentCocktail.name}`"/>
             </div>
 
-            <!-- [TEXT] :: DETAILS -->
+            <!-- [GROUP] :: RECIPE_AND_DETAILS -->
             <div class="recipe">
                 <div class="info">
                     <p>Recipe for:</p>
