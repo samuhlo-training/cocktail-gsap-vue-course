@@ -34,7 +34,7 @@
 ><br/><br />
 >**PLUS:** Also here its a template for GSAP Workshop Starter in Vue : [GSAP Workshop Starter](https://drive.google.com/file/d/1lWy5VyQkdk_8_v1WrdnMHaaazKNQtjLV/view?usp=sharing)
 >
->  **DEMO:** [fastpizza-cursoreact.onrender.com](cocktail-gsap-vue-course.vercel.app)
+>  **DEMO:** [cocktail-gsap-vue-course.vercel.app]((https://cocktail-gsap-vue-course.vercel.app/))
 
 ---
 
