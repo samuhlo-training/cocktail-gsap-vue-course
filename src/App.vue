@@ -17,7 +17,7 @@
 // =====================================================================
 // [SECTION] :: IMPORTS
 // =====================================================================
-import { onMounted } from 'vue';
+import { onMounted, onUnmounted } from 'vue';
 import gsap from 'gsap';
 import { ScrollTrigger, SplitText } from 'gsap/all';
 import Lenis from 'lenis';
@@ -58,7 +58,9 @@ onMounted(() => {
     
     // [1] Initialize Lenis instance
     // We use 'autoRaf: false' implying we will control the loop manually (via GSAP ticker)
-    const lenis = new Lenis();
+    const lenis = new Lenis({
+        autoRaf: false,
+    });
 
     // [2] Synchronize ScrollTrigger
     // Tell ScrollTrigger to listen to the 'lenis' scroll event updates.
@@ -66,17 +68,36 @@ onMounted(() => {
     lenis.on('scroll', ScrollTrigger.update);
 
     // [3] Integrate with GSAP Ticker
-    // Instead of using Lenis's internal requestAnimationFrame, we add it to GSAP's ticker.
-    // This keeps all animations (tweens) and scroll updates in the EXACT same frame.
-    gsap.ticker.add((time) => {
+    // Define the update function separately so we can remove it later
+    const updateTicker = (time: number) => {
         lenis.raf(time * 1000); // Convert time to milliseconds for Lenis
-    });
+    };
+
+    // Add it to GSAP's ticker
+    // This keeps all animations (tweens) and scroll updates in the EXACT same frame.
+    gsap.ticker.add(updateTicker);
 
     // [4] Disable Lag Smoothing
     // GSAP has a feature to "skip" frames if the CPU is too busy (lagSmoothing).
     // In a scroll context, skipping frames means the scroll jumps. We disable it
     // to force smooth continuity at all costs.
     gsap.ticker.lagSmoothing(0);
+
+    // [CLEANUP] :: ON_UNMOUNTED
+    // Ensure we don't leave memory leaks or zombie processes when the component is destroyed.
+    onUnmounted(() => {
+        // Remove the listener from GSAP's ticker
+        gsap.ticker.remove(updateTicker);
+        
+        // Remove the scroll listener
+        lenis.off('scroll', ScrollTrigger.update);
+        
+        // Destroy the Lenis instance
+        lenis.destroy();
+        
+        // Optional: Restore default lag smoothing if needed (standard GSAP is 500ms, 33ms)
+        // But usually, it's fine to leave it off for SPA navigation in this context.
+    });
 });
 
 </script>
