@@ -11,6 +11,7 @@
   <img src="https://img.shields.io/badge/VUE_3-35495E?style=for-the-badge&logo=vue.js&logoColor=4FC08D" alt="Vue" />
   <img src="https://img.shields.io/badge/GSAP-88CE02?style=for-the-badge&logo=greensock&logoColor=black" alt="GSAP" />
    <img src="https://img.shields.io/badge/LENIS-ff6b6b?style=for-the-badge&logo=lenis&logoColor=white" alt="Lenis" />
+     <img src="https://img.shields.io/badge/TAILWIND-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind" />
   <img src="https://img.shields.io/badge/TYPESCRIPT-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
 
 
