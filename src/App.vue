@@ -20,6 +20,7 @@
 import { onMounted } from 'vue';
 import gsap from 'gsap';
 import { ScrollTrigger, SplitText } from 'gsap/all';
+import Lenis from 'lenis';
 
 // Components
 import NavBar from "./components/NavBar.vue";
@@ -42,6 +43,40 @@ import Contact from "./components/Contact.vue";
  */
 onMounted(() => {
     gsap.registerPlugin(ScrollTrigger, SplitText);
+
+    // -----------------------------------------------------------------
+    // [INIT] :: LENIS_SMOOTH_SCROLL
+    // TUTORIAL MODE:
+    // Why do we need this special setup?
+    // 
+    // 1. The Problem: GSAP ScrollTrigger relies on reading the scroll position
+    //    extremely frequently. Standard "smooth scroll" libraries often desync,
+    //    causing elements to "jitter" or "shake" as they try to catch up.
+    //
+    // 2. The Solution: We tell ScrollTrigger exactly when Lenis updates.
+    // -----------------------------------------------------------------
+    
+    // [1] Initialize Lenis instance
+    // We use 'autoRaf: false' implying we will control the loop manually (via GSAP ticker)
+    const lenis = new Lenis();
+
+    // [2] Synchronize ScrollTrigger
+    // Tell ScrollTrigger to listen to the 'lenis' scroll event updates.
+    // This ensures that when Lenis moves, ScrollTrigger knows immediately.
+    lenis.on('scroll', ScrollTrigger.update);
+
+    // [3] Integrate with GSAP Ticker
+    // Instead of using Lenis's internal requestAnimationFrame, we add it to GSAP's ticker.
+    // This keeps all animations (tweens) and scroll updates in the EXACT same frame.
+    gsap.ticker.add((time) => {
+        lenis.raf(time * 1000); // Convert time to milliseconds for Lenis
+    });
+
+    // [4] Disable Lag Smoothing
+    // GSAP has a feature to "skip" frames if the CPU is too busy (lagSmoothing).
+    // In a scroll context, skipping frames means the scroll jumps. We disable it
+    // to force smooth continuity at all costs.
+    gsap.ticker.lagSmoothing(0);
 });
 
 </script>

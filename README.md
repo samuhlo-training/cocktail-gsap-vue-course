@@ -88,6 +88,12 @@ onUnmounted(() => {
 });
 ```
 
+#### B. SMOOTH SCROLLING (LENIS)
+Integration of **Lenis** hijacking native scroll, tailored for GSAP:
+
+- **Sync**: Lenis `raf` is manually ticked by `gsap.ticker` to ensure perfect frame alignment.
+- **Latency**: `gsap.ticker.lagSmoothing(0)` is disabled to prevent scroll jumping on heavy frames.
+
 <div align="center">
 
 
